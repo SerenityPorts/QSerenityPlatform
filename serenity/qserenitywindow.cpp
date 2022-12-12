@@ -5,12 +5,11 @@
  */
 
 #include "qserenitywindow.h"
-
-#include <iostream>
-
-#include <private/qguiapplication_p.h>
-
+#include "qserenitystring.h"
+#include <AK/String.h>
 #include <Kernel/API/KeyCode.h>
+#include <iostream>
+#include <private/qguiapplication_p.h>
 
 static QMap<KeyCode, int> keyMap {
     { KeyCode::Key_Invalid, 0 },
@@ -134,7 +133,8 @@ QSerenityWindow::QSerenityWindow(QWindow *window)
     m_window->set_double_buffering_enabled(false);
 
     m_window->set_main_widget(m_proxyWidget);
-    m_window->set_title(QSerenityString::fromQString(window->title()));
+    const auto title = MUST(QSerenityString::fromQString(window->title()));
+    m_window->set_title(title.to_deprecated_string());
     m_window->show();
 
     std::cerr << "Native window set up\n";
@@ -142,7 +142,8 @@ QSerenityWindow::QSerenityWindow(QWindow *window)
 
 void QSerenityWindow::setWindowTitle(const QString &text)
 {
-    m_window->set_title(QSerenityString::fromQString(text));
+    const auto title = MUST(QSerenityString::fromQString(text));
+    m_window->set_title(title.to_deprecated_string());
 }
 
 QRect QSerenityWindow::geometry() const {

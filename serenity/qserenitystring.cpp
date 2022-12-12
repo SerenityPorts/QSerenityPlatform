@@ -6,12 +6,16 @@
 
 #include "qserenitystring.h"
 
-#include <AK/StdLibExtraDetails.h>
+#include <AK/Span.h>
+#include <AK/String.h>
+#include <AK/Error.h>
 
-AK::String QSerenityString::fromQString(const QString &str) {
-    return AK::String(str.toStdString().c_str());
+AK::ErrorOr<AK::String> QSerenityString::fromQString(const QString &str) {
+    const auto utf8_string = str.toUtf8();
+    return AK::String::from_utf8(AK::StringView(utf8_string.data(), utf8_string.size()));
 }
 
 QString QSerenityString::toQString(const AK::String &v) {
-    return QString(v.characters());
+    const auto bytes = v.bytes();
+    return QString::fromUtf8(reinterpret_cast<const char*>(bytes.data()), bytes.size());
 }

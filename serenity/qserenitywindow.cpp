@@ -134,7 +134,7 @@ QSerenityWindow::QSerenityWindow(QWindow *window)
     m_window->set_double_buffering_enabled(false);
 
     m_window->set_main_widget(m_proxyWidget);
-    m_window->set_title(QSerenityString::fromQString(window->title()));
+    m_window->set_title(QSerenityString::fromQString(window->title()).to_deprecated_string());
     m_window->show();
 
     std::cerr << "Native window set up\n";
@@ -142,7 +142,7 @@ QSerenityWindow::QSerenityWindow(QWindow *window)
 
 void QSerenityWindow::setWindowTitle(const QString &text)
 {
-    m_window->set_title(QSerenityString::fromQString(text));
+    m_window->set_title(QSerenityString::fromQString(text).to_deprecated_string());
 }
 
 QRect QSerenityWindow::geometry() const {
@@ -153,7 +153,7 @@ SerenityProxyWidget::SerenityProxyWidget(QSerenityWindow *window)
     : m_qtWindow(window)
 {
     std::cerr << __FUNCTION__ << std::endl;
-    m_buffer = Gfx::Bitmap::try_create(Gfx::BitmapFormat::BGRx8888, Gfx::IntSize(window->window()->width(), window->window()->height())).value();
+    m_buffer = Gfx::Bitmap::create(Gfx::BitmapFormat::BGRx8888, Gfx::IntSize(window->window()->width(), window->window()->height())).value();
     update();
 }
 
@@ -265,5 +265,3 @@ void SerenityProxyWidget::leave_event(Core::Event &event) {
     QWindow *qtWindow = m_qtWindow->window();
     QWindowSystemInterface::handleLeaveEvent<QWindowSystemInterface::SynchronousDelivery>(qtWindow);
 }
-
-

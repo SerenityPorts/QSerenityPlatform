@@ -36,7 +36,8 @@ QSerenityIntegration::QSerenityIntegration(const QStringList &parameters)
     else {
         perror("pledge");
     }
-    app = GUI::Application::construct(0, nullptr);
+    // FIXME: Pass Qt's parameters to GUI::Application.
+    app = GUI::Application::create({}).release_value();
 
     m_primaryScreen = new QSerenityScreen();
 
